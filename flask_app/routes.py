@@ -1,11 +1,9 @@
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_app import app, db
-from flask_app.models import User
+from flask_app.models import User, Event
 import sqlalchemy as sa
 from flask import redirect, url_for, render_template, flash, request
 from flask_app.forms import LoginForm, SignupForm
-
-user = {'username': 'Bob Dylan'}
 
 @app.route('/') 
 def index():
@@ -64,4 +62,14 @@ def signup():
 @login_required
 def calendar():
     """Calendar page"""
-    return render_template('calendar.html', title='Calendar', user=user)
+    events = [
+        {
+            "title": event.title,
+            "start": event.start_time.isoformat(),
+            "end": event.end_time.isoformat(),
+        }
+        for event in db.session.scalars(
+            sa.select(Event).where(Event.user_id == current_user.id)
+        )
+    ]
+    return render_template('calendar.html', events=events)
