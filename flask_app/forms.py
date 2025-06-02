@@ -12,4 +12,4 @@ class SignupForm(FlaskForm):
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     repeat_password = PasswordField('Repeat Password', validators=[DataRequired()])
-    submit = SubmitField('Sign In')
+    submit = SubmitField('Sign Up')
