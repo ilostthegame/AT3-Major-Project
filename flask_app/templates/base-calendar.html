@@ -1,3 +1,5 @@
+<!-- Base template for logged-in users, including navigation bar -->
+
 <!doctype html>
 <html lang="en">
     <head>
@@ -8,6 +10,11 @@
         <link rel="stylesheet" href="../static/styles.css">
     </head>
     <body>
+        <nav>
+            <ul>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
         <!-- Temporary flash handling -->
         {% with messages = get_flashed_messages() %}
         {% if messages %}
