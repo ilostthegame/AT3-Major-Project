@@ -4,6 +4,8 @@ from flask_app.models import User
 import sqlalchemy as sa
 from flask import redirect, url_for, render_template, flash, request
 from flask_app.forms import LoginForm, SignupForm
+import google.generativeai as genai
+import os
 
 user = {'username': 'Bob Dylan'}
 
@@ -65,3 +67,21 @@ def signup():
 def calendar():
     """Calendar page"""
     return render_template('calendar.html', title='Calendar', user=user)
+
+@app.route('/chatbot')
+@login_required
+def chatbot():
+    return render_template('chatbot.html')
+
+@app.route('/chatbot_ask', methods=['POST'])
+@login_required
+def chatbot_ask():
+    user_message = request.json.get('message', '')
+    genai.configure(api_key=app.config['GOOGLE_API_KEY'])
+    model = genai.GenerativeModel('gemini-pro')
+    try:
+        response = model.generate_content(user_message)
+        bot_reply = response.text.strip()
+    except Exception as e:
+        bot_reply = "Sorry, I couldn't process your request."
+    return {"reply": bot_reply}
