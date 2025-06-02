@@ -22,6 +22,9 @@
             <div class="mb-3">
                 {{ form.password.label(class="form-label") }}<br>
                 {{ form.password(class="form-control") }}
+                <small class="form-text text-muted">
+                    Use 8 or more characters with a mix of lowercase and uppercase letters, numbers, and symbols.
+                </small>
                 {% for error in form.password.errors %}
                     <span style="color: red;">[{{ error }}] </span>
                 {% endfor %}

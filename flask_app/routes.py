@@ -22,7 +22,6 @@ def login():
 
     form = LoginForm()
     if form.validate_on_submit():
-        # Queries the database for the user
         user = db.session.scalar(
             sa.select(User).where(User.username == form.username.data))
         # If user is not found or password does not match, flash an error
@@ -45,10 +44,20 @@ def logout():
 @app.route('/signup', methods=['GET', 'POST'])
 def signup():
     """Handles user signup"""
+    # If the user is already authenticated, redirect to the calendar page
+    if current_user.is_authenticated:
+        return redirect(url_for('calendar'))
+
     form = SignupForm()
     if form.validate_on_submit():
-        flash('Signup requested for user {}'.format(form.username.data))
-        return render_template('signup.html', title='Sign Up', form=form)
+        # Add user to database after validating the form
+        user = User(username=form.username.data, email=form.email.data)
+        user.set_password(form.password.data)
+        db.session.add(user)
+        db.session.commit()
+        # Automatically log in the user after successful signup
+        login_user(user)
+        return redirect(url_for('calendar'))
     return render_template('signup.html', title='Sign Up', form=form)
 
 @app.route('/calendar')
