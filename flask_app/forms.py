@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
-from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
+from wtforms import StringField, PasswordField, SubmitField, DateTimeLocalField, SelectField
+from wtforms.validators import ValidationError, DataRequired, Email, EqualTo 
 import sqlalchemy as sa
 from flask_app import db
 from flask_app.models import User
@@ -45,6 +45,17 @@ class SignupForm(FlaskForm):
             raise ValidationError('Password must contain a digit.')
         if not any(c in "!@#$%^&*()-_=+[{]}\|;:'\",<.>/?`~" for c in pw):
             raise ValidationError('Password must contain a special character.')
+
+class EventForm(FlaskForm):
+    """Form for creating a new calendar event."""
+    title = StringField('Title', validators=[DataRequired()])
+    start_time = DateTimeLocalField('Start Time', validators=[DataRequired()])
+    end_time = DateTimeLocalField('End Time', validators=[DataRequired()])
+    submit = SubmitField('Add Event')
+
+    def validate_end_time(self, end_time):
+        if end_time.data < self.start_time.data:
+            raise ValidationError('End time must be after start time.')
 
 class ChatbotForm(FlaskForm):
     """Form for chatbot interaction."""

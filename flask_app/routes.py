@@ -1,13 +1,11 @@
 from flask_login import current_user, login_user, logout_user, login_required
 from flask_app import app, db
-from flask_app.models import User
+from flask_app.models import User, Event
 import sqlalchemy as sa
 from flask import redirect, url_for, render_template, flash, request, session
-from flask_app.forms import LoginForm, SignupForm, ChatbotForm
+from flask_app.forms import LoginForm, SignupForm, ChatbotForm, EventForm
 import os
 from flask_app.chatbot import get_bot_reply
-
-user = {'username': 'Bob Dylan'}
 
 @app.route('/') 
 def index():
@@ -62,11 +60,47 @@ def signup():
         return redirect(url_for('calendar'))
     return render_template('signup.html', title='Sign Up', form=form)
 
-@app.route('/calendar')
+@app.route('/calendar', methods=['GET', 'POST'])
 @login_required
 def calendar():
-    """Calendar page"""
-    return render_template('calendar.html', title='Calendar', user=user)
+    """Handles calendar view and event creation"""
+    form = EventForm()
+    # Check if user is creating a new event
+    if form.validate_on_submit():
+        event = Event(
+            title=form.title.data,
+            start_time=form.start_time.data,
+            end_time=form.end_time.data,
+            user_id=current_user.id
+        )
+        db.session.add(event)
+        db.session.commit()
+        return redirect(url_for('calendar'))
+    
+    # Else, render the calendar page with existing events
+    events = [
+        {
+            "id": event.id,
+            "title": event.title,
+            "start": event.start_time.isoformat(),
+            "end": event.end_time.isoformat(),
+        }
+        for event in db.session.scalars(
+            sa.select(Event).where(Event.user_id == current_user.id)
+        )
+    ]
+    return render_template('calendar.html', events=events, form=form)
+
+@app.route('/delete_event/<int:event_id>', methods=['POST'])
+@login_required
+def delete_event(event_id):
+    """Handles deletion of an event"""
+    event = db.session.get(Event, event_id)
+    if event and event.user_id == current_user.id:
+        db.session.delete(event)
+        db.session.commit()
+        return '', 204
+    return '', 403
 
 @app.route('/chatbot', methods=['GET', 'POST'])
 @login_required

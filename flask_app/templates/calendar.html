@@ -1,5 +1,107 @@
-{% extends "base-loggedin.html" %}
+<!doctype html>
+<html lang="en">
+    <head>
+        <title>{{ title }} - Calendar App</title>
+        <meta charset="UTF-8" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css">
+        <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.css">
+        <link rel="stylesheet" href="../static/styles.css">
+    </head>
+    <body>
+        <nav>
+            <ul>
+                <li><a href="/logout">Logout</a></li>
+            </ul>
+        </nav>
+        <!-- Calendar display -->
+        <div class="container mt-4">
+            <div id="calendar"></div>
+        </div>
+        <script src="https://cdn.jsdelivr.net/npm/fullcalendar@6.1.11/index.global.min.js"></script>
+        <!-- Embeds events data as a JSON script element -->
+        <script id="events-data" type="application/json">
+            {{ events|tojson|safe }}
+        </script>
+        <script>
+            document.addEventListener('DOMContentLoaded', function() {
+                var calendarEl = document.getElementById('calendar');
+                var events = JSON.parse(document.getElementById('events-data').textContent);
+                var calendar = new FullCalendar.Calendar(calendarEl, {
+                    initialView: 'dayGridMonth',
+                    height: 650,
+                    events: events,
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    allDaySlot: false,
+                    // Click deletion of events
+                    eventClick: function(info) {
+                        if (confirm('Delete this event?')) {
+                            fetch('/delete_event/' + info.event.id, {
+                                method: 'POST',
+                            }).then(response => {
+                                if (response.ok) {
+                                    info.event.remove(); // Remove from calendar UI
+                                } else {
+                                    alert('Failed to delete event.');
+                                }
+                            });
+                        }
+                    },
+                    // Switch to day view for the clicked date
+                    dateClick: function(info) {
+                        calendar.changeView('timeGridDay', info.dateStr);
+                    },
+                    // Switch to day view when clicking on the headers in week view
+                    dayHeaderDidMount: function(arg) {
+                        if (arg.view.type === 'timeGridWeek') { 
+                            arg.el.addEventListener('click', function() {
+                                calendar.changeView('timeGridDay', arg.date);
+                            });
+                        }
+                    },
+                });
+                calendar.render();
+            });
+        </script>
 
-{% block content %}
-    <p>Calendar</p>
-{% endblock %}
+        <hr>
+        <!-- Form for adding new events -->
+        <div class="container mt-4">
+            <h3>Add new event</h3>
+            <div id="calendar"></div>
+            <form method="post" class="mt-4">
+                {{ form.hidden_tag() }}
+                <div class="row mb-2">
+                    <div class="col-md-4 mb-2">
+                        {{ form.title.label(class="form-label") }}
+                        {{ form.title(class="form-control") }}
+                        {% for error in form.title.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        {{ form.start_time.label(class="form-label") }}
+                        {{ form.start_time(class="form-control") }}
+                        {% for error in form.start_time.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        {{ form.end_time.label(class="form-label") }}
+                        {{ form.end_time(class="form-control") }}
+                        {% for error in form.end_time.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div>
+                    {{ form.submit(class="btn btn-success") }}
+                </div>
+            </form>
+        </div>
+    </body>
+</html>
