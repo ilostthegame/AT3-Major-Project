@@ -39,6 +39,7 @@
                         right: 'dayGridMonth,timeGridWeek,timeGridDay'
                     },
                     allDaySlot: false,
+                    // Click deletion of events
                     eventClick: function(info) {
                         if (confirm('Delete this event?')) {
                             fetch('/delete_event/' + info.event.id, {
@@ -51,7 +52,19 @@
                                 }
                             });
                         }
-                    }
+                    },
+                    // Switch to day view for the clicked date
+                    dateClick: function(info) {
+                        calendar.changeView('timeGridDay', info.dateStr);
+                    },
+                    // Switch to day view when clicking on the headers in week view
+                    dayHeaderDidMount: function(arg) {
+                        if (arg.view.type === 'timeGridWeek') { 
+                            arg.el.addEventListener('click', function() {
+                                calendar.changeView('timeGridDay', arg.date);
+                            });
+                        }
+                    },
                 });
                 calendar.render();
             });

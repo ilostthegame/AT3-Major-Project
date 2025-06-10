@@ -1,6 +1,8 @@
 body {
     background-color: #f8f9fa;
 }
+
+/* Style for the login/signup container */
 .login-container {
     max-width: 400px;
     margin: auto;
@@ -14,4 +16,17 @@ body {
 /* Make cursor pointer when hovering over events in calendar */
 .fc-event, .fc .fc-event {
     cursor: pointer;
+}
+
+/* Make cursor pointer when hovering over day numbers and day headers */
+.fc-daygrid-day-number:hover,
+.fc-col-header-cell-cushion:hover {
+    cursor: pointer;
+}
+
+/* Style for the calendar */
+.fc-daygrid-day-number,
+.fc-col-header-cell-cushion {
+    color: #000 !important; 
+    text-decoration: none !important;
 }
