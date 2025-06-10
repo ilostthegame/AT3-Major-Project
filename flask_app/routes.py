@@ -78,6 +78,7 @@ def calendar():
     # Else, render the calendar page with existing events
     events = [
         {
+            "id": event.id,
             "title": event.title,
             "start": event.start_time.isoformat(),
             "end": event.end_time.isoformat(),
@@ -87,3 +88,14 @@ def calendar():
         )
     ]
     return render_template('calendar.html', events=events, form=form)
+
+@app.route('/delete_event/<int:event_id>', methods=['POST'])
+@login_required
+def delete_event(event_id):
+    """Handles deletion of an event"""
+    event = db.session.get(Event, event_id)
+    if event and event.user_id == current_user.id:
+        db.session.delete(event)
+        db.session.commit()
+        return '', 204
+    return '', 403

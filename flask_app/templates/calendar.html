@@ -37,6 +37,20 @@
                         left: 'prev,next today',
                         center: 'title',
                         right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    },
+                    allDaySlot: false,
+                    eventClick: function(info) {
+                        if (confirm('Delete this event?')) {
+                            fetch('/delete_event/' + info.event.id, {
+                                method: 'POST',
+                            }).then(response => {
+                                if (response.ok) {
+                                    info.event.remove(); // Remove from calendar UI
+                                } else {
+                                    alert('Failed to delete event.');
+                                }
+                            });
+                        }
                     }
                 });
                 calendar.render();
