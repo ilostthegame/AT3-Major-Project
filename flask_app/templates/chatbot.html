@@ -1,0 +1,31 @@
+{% extends "base-loggedin.html" %}
+{% block content %}
+<div class="container mt-4">
+    <h3>Helper Chatbot</h3>
+    <div id="chatbox" style="border:1px solid #ccc; padding:1em; height:300px; overflow-y:auto; margin-bottom:1em;">
+        {% if chat_history %}
+            {% for entry in chat_history %}
+                <div><b>You:</b> {{ entry.user }}</div>
+                <div><b>Bot:</b> {{ entry.bot }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <form id="chat-form" method="post" autocomplete="off">
+        {{ form.hidden_tag() }}
+        <div class="input-group">
+            {{ form.message(class="form-control", id="user-input", placeholder="Type your question...", autocomplete="off") }}
+            <button type="submit" class="btn btn-primary">Send</button>
+        </div>
+        {% for error in form.message.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
+    </form>
+</div>
+<!-- Ensures the chatbox scrolls to the bottom when page is entered -->
+<script>
+window.onload = function() {
+    var chatbox = document.getElementById('chatbox');
+    chatbox.scrollTop = chatbox.scrollHeight;
+};
+</script>
+{% endblock %}

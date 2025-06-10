@@ -2,8 +2,10 @@ from flask_login import current_user, login_user, logout_user, login_required
 from flask_app import app, db
 from flask_app.models import User
 import sqlalchemy as sa
-from flask import redirect, url_for, render_template, flash, request
-from flask_app.forms import LoginForm, SignupForm
+from flask import redirect, url_for, render_template, flash, request, session
+from flask_app.forms import LoginForm, SignupForm, ChatbotForm
+import os
+from flask_app.chatbot import get_bot_reply
 
 user = {'username': 'Bob Dylan'}
 
@@ -65,3 +67,21 @@ def signup():
 def calendar():
     """Calendar page"""
     return render_template('calendar.html', title='Calendar', user=user)
+
+@app.route('/chatbot', methods=['GET', 'POST'])
+@login_required
+def chatbot():
+    """Handles chatbot interaction"""
+    form = ChatbotForm()
+    # Initialize chat history in session if it doesn't exist
+    if 'chat_history' not in session:
+        session['chat_history'] = []
+    chat_history = session['chat_history']
+
+    if form.validate_on_submit():
+        user_msg = form.message.data
+        form.message.data = ''  # Clear the input field after submission
+        bot_reply = get_bot_reply(user_msg) 
+        chat_history.append({'user': user_msg, 'bot': bot_reply})
+        session['chat_history'] = chat_history
+    return render_template('chatbot.html', form=form, chat_history=chat_history)

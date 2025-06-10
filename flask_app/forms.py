@@ -6,11 +6,13 @@ from flask_app import db
 from flask_app.models import User
 
 class LoginForm(FlaskForm):
+    """Form for user login."""
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
     submit = SubmitField('Sign In')
 
 class SignupForm(FlaskForm):
+    """Form for user signup."""
     email = StringField('Email', validators=[DataRequired(), Email()])
     username = StringField('Username', validators=[DataRequired()])
     password = PasswordField('Password', validators=[DataRequired()])
@@ -43,3 +45,8 @@ class SignupForm(FlaskForm):
             raise ValidationError('Password must contain a digit.')
         if not any(c in "!@#$%^&*()-_=+[{]}\|;:'\",<.>/?`~" for c in pw):
             raise ValidationError('Password must contain a special character.')
+
+class ChatbotForm(FlaskForm):
+    """Form for chatbot interaction."""
+    message = StringField('Message', validators=[DataRequired()])
+    submit = SubmitField('Send')
