@@ -3,7 +3,7 @@ from flask_app import app, db
 from flask_app.models import User, Event
 import sqlalchemy as sa
 from flask import redirect, url_for, render_template, flash, request
-from flask_app.forms import LoginForm, SignupForm
+from flask_app.forms import LoginForm, SignupForm, EventForm
 
 @app.route('/') 
 def index():
@@ -58,10 +58,24 @@ def signup():
         return redirect(url_for('calendar'))
     return render_template('signup.html', title='Sign Up', form=form)
 
-@app.route('/calendar')
+@app.route('/calendar', methods=['GET', 'POST'])
 @login_required
 def calendar():
-    """Calendar page"""
+    """Handles calendar view and event creation"""
+    form = EventForm()
+    # Check if user is creating a new event
+    if form.validate_on_submit():
+        event = Event(
+            title=form.title.data,
+            start_time=form.start_time.data,
+            end_time=form.end_time.data,
+            user_id=current_user.id
+        )
+        db.session.add(event)
+        db.session.commit()
+        return redirect(url_for('calendar'))
+    
+    # Else, render the calendar page with existing events
     events = [
         {
             "title": event.title,
@@ -72,4 +86,4 @@ def calendar():
             sa.select(Event).where(Event.user_id == current_user.id)
         )
     ]
-    return render_template('calendar.html', events=events)
+    return render_template('calendar.html', events=events, form=form)

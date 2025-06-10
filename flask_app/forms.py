@@ -1,5 +1,5 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, BooleanField, SubmitField
+from wtforms import StringField, PasswordField, SubmitField, DateTimeField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo
 import sqlalchemy as sa
 from flask_app import db
@@ -43,3 +43,10 @@ class SignupForm(FlaskForm):
             raise ValidationError('Password must contain a digit.')
         if not any(c in "!@#$%^&*()-_=+[{]}\|;:'\",<.>/?`~" for c in pw):
             raise ValidationError('Password must contain a special character.')
+
+class EventForm(FlaskForm):
+    """Form for creating a new calendar event."""
+    title = StringField('Title', validators=[DataRequired()])
+    start_time = DateTimeField('Start Time (YYYY-MM-DD HH:MM)', format='%Y-%m-%d %H:%M', validators=[DataRequired()])
+    end_time = DateTimeField('End Time (YYYY-MM-DD HH:MM)', format='%Y-%m-%d %H:%M', validators=[DataRequired()])
+    submit = SubmitField('Add Event')

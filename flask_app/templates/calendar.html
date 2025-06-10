@@ -16,7 +16,7 @@
                 <li><a href="/logout">Logout</a></li>
             </ul>
         </nav>
-
+        <!-- Calendar display -->
         <div class="container mt-4">
             <div id="calendar"></div>
         </div>
@@ -37,5 +37,41 @@
                 calendar.render();
             });
         </script>
+
+        <hr>
+        <!-- Form for adding new events -->
+        <div class="container mt-4">
+            <h3>Add new event</h3>
+            <div id="calendar"></div>
+            <form method="post" class="mt-4">
+                {{ form.hidden_tag() }}
+                <div class="row mb-2">
+                    <div class="col-md-4 mb-2">
+                        {{ form.title.label(class="form-label") }}
+                        {{ form.title(class="form-control") }}
+                        {% for error in form.title.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        {{ form.start_time.label(class="form-label") }}
+                        {{ form.start_time(class="form-control") }}
+                        {% for error in form.start_time.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                    <div class="col-md-4 mb-2">
+                        {{ form.end_time.label(class="form-label") }}
+                        {{ form.end_time(class="form-control") }}
+                        {% for error in form.end_time.errors %}
+                            <span class="text-danger">{{ error }}</span>
+                        {% endfor %}
+                    </div>
+                </div>
+                <div>
+                    {{ form.submit(class="btn btn-success") }}
+                </div>
+            </form>
+        </div>
     </body>
 </html>
