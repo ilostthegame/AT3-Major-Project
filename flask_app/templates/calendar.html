@@ -33,6 +33,11 @@
                     initialView: 'dayGridMonth',
                     height: 650,
                     events: events,
+                    headerToolbar: {
+                        left: 'prev,next today',
+                        center: 'title',
+                        right: 'dayGridMonth,timeGridWeek,timeGridDay'
+                    }
                 });
                 calendar.render();
             });
