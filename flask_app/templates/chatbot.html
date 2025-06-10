@@ -2,27 +2,29 @@
 {% block content %}
 <div class="container mt-4">
     <h3>Helper Chatbot</h3>
-    <div id="chatbox" style="border:1px solid #ccc; padding:1em; height:300px; overflow-y:auto; margin-bottom:1em;"></div>
-    <form id="chat-form"> <!-- TODO: Use Flask-WTF -->
-        <input type="text" id="user-input" class="form-control" placeholder="Type your question..." autocomplete="off">
-        <button type="submit" class="btn btn-primary mt-2">Send</button>
+    <div id="chatbox" style="border:1px solid #ccc; padding:1em; height:300px; overflow-y:auto; margin-bottom:1em;">
+        {% if chat_history %}
+            {% for entry in chat_history %}
+                <div><b>You:</b> {{ entry.user }}</div>
+                <div><b>Bot:</b> {{ entry.bot }}</div>
+            {% endfor %}
+        {% endif %}
+    </div>
+    <form id="chat-form" method="post" autocomplete="off">
+        {{ form.hidden_tag() }}
+        <div class="input-group">
+            {{ form.message(class="form-control", id="user-input", placeholder="Type your question...", autocomplete="off") }}
+            <button type="submit" class="btn btn-primary">Send</button>
+        </div>
+        {% for error in form.message.errors %}
+            <span style="color: red;">[{{ error }}]</span>
+        {% endfor %}
     </form>
 </div>
+<!-- Ensures the chatbox scrolls to the bottom when page is entered -->
 <script>
-document.getElementById('chat-form').onsubmit = async function(e) {
-    e.preventDefault();
-    const input = document.getElementById('user-input');
-    const chatbox = document.getElementById('chatbox');
-    const userMsg = input.value;
-    chatbox.innerHTML += `<div><b>You:</b> ${userMsg}</div>`;
-    input.value = '';
-    const response = await fetch('/chatbot_ask', {
-        method: 'POST',
-        headers: {'Content-Type': 'application/json'},
-        body: JSON.stringify({message: userMsg})
-    });
-    const data = await response.json();
-    chatbox.innerHTML += `<div><b>Bot:</b> ${data.reply}</div>`;
+window.onload = function() {
+    var chatbox = document.getElementById('chatbox');
     chatbox.scrollTop = chatbox.scrollHeight;
 };
 </script>

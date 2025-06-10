@@ -2,10 +2,10 @@ from flask_login import current_user, login_user, logout_user, login_required
 from flask_app import app, db
 from flask_app.models import User
 import sqlalchemy as sa
-from flask import redirect, url_for, render_template, flash, request
-from flask_app.forms import LoginForm, SignupForm
-import google.generativeai as genai
+from flask import redirect, url_for, render_template, flash, request, session
+from flask_app.forms import LoginForm, SignupForm, ChatbotForm
 import os
+from flask_app.chatbot import get_bot_reply
 
 user = {'username': 'Bob Dylan'}
 
@@ -68,26 +68,20 @@ def calendar():
     """Calendar page"""
     return render_template('calendar.html', title='Calendar', user=user)
 
-@app.route('/chatbot')
+@app.route('/chatbot', methods=['GET', 'POST'])
 @login_required
 def chatbot():
-    """Chatbot page"""
-    return render_template('chatbot.html')
+    """Handles chatbot interaction"""
+    form = ChatbotForm()
+    # Initialize chat history in session if it doesn't exist
+    if 'chat_history' not in session:
+        session['chat_history'] = []
+    chat_history = session['chat_history']
 
-@app.route('/chatbot_ask', methods=['POST'])
-@login_required
-def chatbot_ask():
-    """Handles chatbot requests"""
-    user_message = request.json.get('message', '')
-    genai.configure(api_key=app.config['GOOGLE_API_KEY'])
-    print(app.config['GOOGLE_API_KEY'])
-    model = genai.GenerativeModel('models/gemini-2.0-flash')
-    for m in genai.list_models():
-        print(m.name, m.supported_generation_methods)
-    try:
-        response = model.generate_content(f"Please provide a helpful message about how to use this calendar app for this question: [question start] {user_message}. [question end] If this question is not related to the calendar app, please respond with 'I don't know'. Do not add markdown formatting to your response.")
-        bot_reply = response.text.strip()
-    except Exception as e:
-        print(e)
-        bot_reply = "Sorry, I couldn't process your request."
-    return {"reply": bot_reply}
+    if form.validate_on_submit():
+        user_msg = form.message.data
+        form.message.data = ''  # Clear the input field after submission
+        bot_reply = get_bot_reply(user_msg) 
+        chat_history.append({'user': user_msg, 'bot': bot_reply})
+        session['chat_history'] = chat_history
+    return render_template('chatbot.html', form=form, chat_history=chat_history)
