@@ -17,7 +17,7 @@
             <button type="submit" class="btn btn-primary">Send</button>
         </div>
         {% for error in form.message.errors %}
-            <span style="color: red;">[{{ error }}]</span>
+            <span class="text-danger">[{{ error }}]</span>
         {% endfor %}
     </form>
 </div>

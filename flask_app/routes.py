@@ -119,3 +119,13 @@ def chatbot():
         chat_history.append({'user': user_msg, 'bot': bot_reply})
         session['chat_history'] = chat_history
     return render_template('chatbot.html', form=form, chat_history=chat_history)
+
+@app.route('/analysis', methods=['GET', 'POST'])
+@login_required
+def analysis():
+    """Handles predictive analysis of user data"""
+
+@app.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    """Handles user settings"""
