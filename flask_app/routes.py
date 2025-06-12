@@ -127,3 +127,13 @@ def reset_chat():
     """Reset chat session"""
     session['chat_history'] = []
     return redirect(url_for('chatbot'))
+
+@app.route('/analysis', methods=['GET', 'POST'])
+@login_required
+def analysis():
+    """Handles predictive analysis of user data"""
+
+@app.route('/settings', methods=['GET', 'POST'])
+@login_required
+def settings():
+    """Handles user settings"""
