@@ -43,7 +43,7 @@ class SignupForm(FlaskForm):
             raise ValidationError('Password must contain an uppercase letter.')
         if not any(c.isdigit() for c in pw):
             raise ValidationError('Password must contain a digit.')
-        if not any(c in "!@#$%^&*()-_=+[{]}\|;:'\",<.>/?`~" for c in pw):
+        if not any(c in "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~" for c in pw):
             raise ValidationError('Password must contain a special character.')
 
 class EventForm(FlaskForm):
