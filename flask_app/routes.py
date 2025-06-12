@@ -114,8 +114,16 @@ def chatbot():
 
     if form.validate_on_submit():
         user_msg = form.message.data
-        form.message.data = ''  # Clear the input field after submission
         bot_reply = get_bot_reply(user_msg) 
         chat_history.append({'user': user_msg, 'bot': bot_reply})
         session['chat_history'] = chat_history
+        # Create a new form instance to clear the field
+        form = ChatbotForm()
     return render_template('chatbot.html', form=form, chat_history=chat_history)
+
+@app.route('/chatbot/reset', methods=['POST'])
+@login_required
+def reset_chat():
+    """Reset chat session"""
+    session['chat_history'] = []
+    return redirect(url_for('chatbot'))

@@ -1,13 +1,22 @@
 {% extends "base-loggedin.html" %}
 {% block content %}
 <div class="container mt-4">
-    <h3>Helper Chatbot</h3>
+    <div class="d-flex justify-content-between align-items-center mb-3">
+        <h3>Helper Chatbot</h3>
+        <form method="post" action="{{ url_for('reset_chat') }}" style="display: inline;">
+            <button type="submit" class="btn btn-outline-danger btn-sm" onclick="return confirm('Are you sure you want to clear the chat history?')">
+                Reset Chat
+            </button>
+        </form>
+    </div>
     <div id="chatbox" style="border:1px solid #ccc; padding:1em; height:300px; overflow-y:auto; margin-bottom:1em;">
         {% if chat_history %}
             {% for entry in chat_history %}
                 <div><b>You:</b> {{ entry.user }}</div>
                 <div><b>Bot:</b> {{ entry.bot }}</div>
             {% endfor %}
+        {% else %}
+            <div style="color: #666; font-style: italic;">No chat history. Start a conversation!</div>
         {% endif %}
     </div>
     <form id="chat-form" method="post" autocomplete="off">

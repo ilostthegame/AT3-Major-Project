@@ -11,3 +11,6 @@ from flask_app.models import User, Event
 @app.shell_context_processor
 def make_shell_context():
     return {'sa': sa, 'so': so, 'db': db, 'User': User, 'Event': Event}
+
+if __name__ == '__main__':
+    app.run(debug=True, port=5000)
