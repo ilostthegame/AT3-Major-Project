@@ -1,0 +1,58 @@
+{% extends "base-loggedin.html" %}
+{% block content %}
+<div class="container mt-4" style="max-width: 600px;">
+    <h2>User Settings</h2>
+    {% if message %}
+        <div class="alert alert-info">{{ message }}</div>
+    {% endif %}
+
+    <!-- General Settings Form -->
+    <form method="post">
+        {{ general_form.hidden_tag() }}
+        <div class="mb-3">
+            {{ general_form.confirm_delete_events.label(class="form-label") }}
+            {{ general_form.confirm_delete_events(class="form-check-input") }}
+        </div>
+        {{ general_form.submit_general(class="btn btn-primary mb-3") }}
+    </form>
+    <hr>
+
+    <!-- Password Change Form -->
+    <h4>Change Password</h4>
+    <form method="post">
+        {{ password_form.hidden_tag() }}
+        <div class="mb-3">
+            {{ password_form.old_password.label(class="form-label") }}
+            {{ password_form.old_password(class="form-control") }}
+            {% for error in password_form.old_password.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            {{ password_form.new_password.label(class="form-label") }}
+            {{ password_form.new_password(class="form-control") }}
+            {% for error in password_form.new_password.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        <div class="mb-3">
+            {{ password_form.confirm_new_password.label(class="form-label") }}
+            {{ password_form.confirm_new_password(class="form-control") }}
+            {% for error in password_form.confirm_new_password.errors %}
+                <div class="text-danger">{{ error }}</div>
+            {% endfor %}
+        </div>
+        {{ password_form.submit_password(class="btn btn-secondary mb-3") }}
+    </form>
+    <hr>
+    
+    <!-- Clear Calendar Form -->
+    <div class="mb-3">
+        <h4 class="text-danger">Danger Zone</h4>
+        <form method="post" onsubmit="return confirm('Are you sure you want to delete all your events? This cannot be undone.');">
+            {{ clear_form.hidden_tag() }}
+            {{ clear_form.submit_clear(class="btn btn-danger") }}
+        </form>
+    </div>
+</div>
+{% endblock %}

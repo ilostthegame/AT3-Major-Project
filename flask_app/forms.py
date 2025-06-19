@@ -1,9 +1,10 @@
 from flask_wtf import FlaskForm
-from wtforms import StringField, PasswordField, SubmitField, DateTimeLocalField, SelectField
+from wtforms import StringField, PasswordField, SubmitField, DateTimeLocalField, SelectField, BooleanField
 from wtforms.validators import ValidationError, DataRequired, Email, EqualTo 
 import sqlalchemy as sa
 from flask_app import db
 from flask_app.models import User
+from flask_login import current_user
 
 class LoginForm(FlaskForm):
     """Form for user login."""
@@ -61,3 +62,38 @@ class ChatbotForm(FlaskForm):
     """Form for chatbot interaction."""
     message = StringField('Message', validators=[DataRequired()])
     submit = SubmitField('Send')
+
+class GeneralSettingsForm(FlaskForm):
+    """Form for general user settings."""
+    confirm_delete_events = BooleanField('Require confirmation when deleting events')
+    submit_general = SubmitField('Save Settings')
+
+class PasswordChangeForm(FlaskForm):
+    """Form for changing user password."""
+    old_password = PasswordField('Current Password', validators=[DataRequired()])
+    new_password = PasswordField('New Password', validators=[DataRequired()])
+    confirm_new_password = PasswordField('Confirm New Password', validators=[DataRequired(), EqualTo('new_password')])
+    submit_password = SubmitField('Change Password')
+
+    def validate_old_password(self, field):
+        """Ensure input is equal to user's current password"""
+        if not current_user.check_password(field.data):
+            raise ValidationError('Current password is incorrect')
+
+    def validate_new_password(self, new_password):
+        """Ensure password meets security requirements."""
+        pw = new_password.data
+        if len(pw) < 8:
+            raise ValidationError('Password must be at least 8 characters long.')
+        if not any(c.islower() for c in pw):
+            raise ValidationError('Password must contain a lowercase letter.')
+        if not any(c.isupper() for c in pw):
+            raise ValidationError('Password must contain an uppercase letter.')
+        if not any(c.isdigit() for c in pw):
+            raise ValidationError('Password must contain a digit.')
+        if not any(c in "!@#$%^&*()-_=+[{]}\\|;:'\",<.>/?`~" for c in pw):
+            raise ValidationError('Password must contain a special character.')
+
+class ClearCalendarForm(FlaskForm):
+    """Form for clearing the calendar."""
+    submit_clear = SubmitField('Clear All Events')

@@ -3,7 +3,7 @@ from flask_app import app, db
 from flask_app.models import User, Event
 import sqlalchemy as sa
 from flask import redirect, url_for, render_template, flash, request, session
-from flask_app.forms import LoginForm, SignupForm, ChatbotForm, EventForm
+from flask_app.forms import LoginForm, SignupForm, ChatbotForm, EventForm, GeneralSettingsForm, PasswordChangeForm, ClearCalendarForm
 import os
 from flask_app.chatbot import get_bot_reply
 
@@ -128,4 +128,28 @@ def analysis():
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
 def settings():
-    """Handles user settings"""
+    general_form = GeneralSettingsForm(obj=current_user)
+    password_form = PasswordChangeForm()
+    clear_form = ClearCalendarForm()
+    message = None
+
+    if general_form.submit_general.data and general_form.validate_on_submit():
+        current_user.confirm_delete_events = general_form.confirm_delete_events.data
+        db.session.commit()
+        message = 'Settings updated.'
+
+    elif password_form.submit_password.data and password_form.validate_on_submit():
+        current_user.set_password(password_form.new_password.data)
+        db.session.commit()
+        message = 'Password changed successfully.'
+
+    elif clear_form.submit_clear.data and clear_form.validate_on_submit():
+        Event.query.filter_by(user_id=current_user.id).delete()
+        db.session.commit()
+        message = 'All events deleted.'
+
+    return render_template('settings.html',
+                           general_form=general_form,
+                           password_form=password_form,
+                           clear_form=clear_form,
+                           message=message)

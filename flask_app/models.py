@@ -21,6 +21,7 @@ class User(UserMixin, db.Model):
                                              unique=True)
     password_hash: so.Mapped[Optional[str]] = so.mapped_column(sa.String(256))
     events: so.WriteOnlyMapped['Event'] = so.relationship(back_populates='user')
+    confirm_delete_events: so.Mapped[bool] = so.mapped_column(sa.Boolean, default=True)
 
     def set_password(self, password):
         """Set the user's password after hashing it."""
@@ -29,6 +30,13 @@ class User(UserMixin, db.Model):
     def check_password(self, password):
         """Check if the provided password matches the stored hash."""
         return check_password_hash(self.password_hash, password)
+
+    def change_password(self, old_password, new_password):
+        """Change the user's password if the old password is correct."""
+        if self.check_password(old_password):
+            self.set_password(new_password)
+            return True
+        return False
 
     def __repr__(self):
         return '<User {}>'.format(self.username)

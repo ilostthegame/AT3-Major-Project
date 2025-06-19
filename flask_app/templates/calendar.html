@@ -11,10 +11,14 @@
     <script id="events-data" type="application/json">
         {{ events|tojson|safe }}
     </script>
+    <script id="confirm-delete" type="application/json">
+        {{ current_user.confirm_delete_events|tojson|safe }}
+    </script>
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             var calendarEl = document.getElementById('calendar');
             var events = JSON.parse(document.getElementById('events-data').textContent);
+            var confirmDelete = JSON.parse(document.getElementById('confirm-delete').textContent);
             var calendar = new FullCalendar.Calendar(calendarEl, {
                 initialView: 'dayGridMonth',
                 height: 650,
@@ -27,12 +31,25 @@
                 allDaySlot: false,
                 // Click deletion of events
                 eventClick: function(info) {
-                    if (confirm('Delete this event?')) {
+                    if (confirmDelete) {
+                        if (confirm('Delete this event?')) {
+                            fetch('/delete_event/' + info.event.id, {
+                                method: 'POST',
+                            }).then(response => {
+                                if (response.ok) {
+                                    info.event.remove();
+                                } else {
+                                    alert('Failed to delete event.');
+                                }
+                            });
+                        }
+                    } else {
+                        // proceed with deletion without confirmation
                         fetch('/delete_event/' + info.event.id, {
                             method: 'POST',
                         }).then(response => {
                             if (response.ok) {
-                                info.event.remove(); // Remove from calendar UI
+                                info.event.remove();
                             } else {
                                 alert('Failed to delete event.');
                             }
