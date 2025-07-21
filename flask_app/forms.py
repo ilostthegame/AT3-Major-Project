@@ -97,3 +97,8 @@ class PasswordChangeForm(FlaskForm):
 class ClearCalendarForm(FlaskForm):
     """Form for clearing the calendar."""
     submit_clear = SubmitField('Clear All Events')
+
+class AICalendarEventForm(FlaskForm):
+    """Form for automated event addition"""
+    message = StringField('Describe your event', validators=[DataRequired()])
+    autoevent_submit = SubmitField('Add Event With AI')

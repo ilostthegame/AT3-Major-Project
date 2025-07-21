@@ -3,7 +3,7 @@ from flask_app import app, db
 from flask_app.models import User, Event
 import sqlalchemy as sa
 from flask import redirect, url_for, render_template, flash, request, session
-from flask_app.forms import LoginForm, SignupForm, ChatbotForm, EventForm, GeneralSettingsForm, PasswordChangeForm, ClearCalendarForm
+from flask_app.forms import LoginForm, SignupForm, ChatbotForm, EventForm, AICalendarEventForm, GeneralSettingsForm, PasswordChangeForm, ClearCalendarForm
 import os
 from flask_app.chatbot import get_bot_reply
 
@@ -11,7 +11,6 @@ from flask_app.chatbot import get_bot_reply
 def index():
     """Index route"""
     return redirect(url_for('login'))
-    # TODO: Insert conditional for redirect based on user's authentication status.
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -65,6 +64,7 @@ def signup():
 def calendar():
     """Handles calendar view and event creation"""
     form = EventForm()
+    ai_form = AICalendarEventForm()
     # Check if user is creating a new event
     if form.validate_on_submit():
         event = Event(
@@ -119,6 +119,7 @@ def chatbot():
         chat_history.append({'user': user_msg, 'bot': bot_reply})
         session['chat_history'] = chat_history
     return render_template('chatbot.html', form=form, chat_history=chat_history)
+
 
 @app.route('/analysis', methods=['GET', 'POST'])
 @login_required
