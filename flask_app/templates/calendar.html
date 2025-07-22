@@ -107,5 +107,17 @@
                 {{ form.submit(class="btn btn-success") }}
             </div>
         </form>
+    <hr>
+    </div>
+    <!-- Form for AI-powered automated event -->
+    <div class="container mt-4">
+        <h3>Automated Event</h3>
+        <form method="post" class="mb-4">
+            {{ ai_form.hidden_tag() }}
+            <div class="input-group">
+                {{ ai_form.prompt(class="form-control", placeholder="Describe your event...") }}
+                {{ ai_form.submit_ai(class="btn btn-info") }}
+            </div>
+        </form>
     </div>
 {% endblock %}

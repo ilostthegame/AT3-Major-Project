@@ -1,5 +1,6 @@
 import google.generativeai as genai
 from flask_app import app
+import datetime
 
 def get_bot_reply(message):
     """Generates and returns a response from the chatbot."""
@@ -13,3 +14,15 @@ def get_bot_reply(message):
         print(e)
         bot_reply = "Sorry, I couldn't process your request."
     return bot_reply
+
+def get_ai_event_string(prompt):
+    """Generates an event string from the AI based on the user's prompt."""
+    genai.configure(api_key=app.config['GOOGLE_API_KEY'])
+    model = genai.GenerativeModel('models/gemini-2.0-flash')
+    try:
+        response = model.generate_content(f"Please try to generate a calendar event string based on this description here: [event description start] {prompt} [event description end]. The format should be 'Title | Start Time | End Time', where Start Time and End Time are in ISO 8601 format (e.g., 2025-07-23T10:00), without any additional text or formatting. The date today is {datetime.datetime.now()} - make sure the event occurs soon after the time right now. If the user's message is too unspecific (for example gibberish like 'a'), please respond with the exact message 'Could not generate event string.'. Only respond with one of these two things.")
+        ai_event_str = response.text.strip()
+    except Exception as e:
+        print(e)
+        ai_event_str = "Could not generate event string."
+    return ai_event_str
