@@ -26,3 +26,24 @@ def get_ai_event_string(prompt):
         print(e)
         ai_event_str = "Could not generate event string."
     return ai_event_str
+
+def get_productivity_analysis(events):
+    """Generates a productivity analysis from the AI based on user's events."""
+    genai.configure(api_key=app.config['GOOGLE_API_KEY'])
+    model = genai.GenerativeModel('models/gemini-2.0-flash')
+    # Format events for prompt
+    event_list = '\n'.join([
+        f"Title: {e.title}, Start: {e.start_time}, End: {e.end_time}" for e in events
+    ])
+    prompt = (
+        "Here is a list of calendar events for a user. Please analyze their productivity, "
+        "give insights, and suggest improvements. Only respond with your analysis, no markdown or formatting. "
+        "If the list is empty, say 'No events found.'\n\nEvents:\n" + event_list
+    )
+    try:
+        response = model.generate_content(prompt)
+        analysis = response.text.strip()
+    except Exception as e:
+        print(e)
+        analysis = "Sorry, I couldn't process your request."
+    return analysis

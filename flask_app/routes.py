@@ -5,7 +5,7 @@ import sqlalchemy as sa
 from flask import redirect, url_for, render_template, flash, request, session
 from flask_app.forms import LoginForm, SignupForm, ChatbotForm, EventForm, AICalendarEventForm, GeneralSettingsForm, PasswordChangeForm, ClearCalendarForm
 import os
-from flask_app.chatbot import get_bot_reply, get_ai_event_string
+from flask_app.chatbot import get_bot_reply, get_ai_event_string, get_productivity_analysis
 import datetime
 
 @app.route('/') 
@@ -145,6 +145,14 @@ def chatbot():
 @login_required
 def analysis():
     """Handles predictive analysis of user data"""
+    analysis_result = None
+    if request.method == 'POST':
+        # Get all events for current user
+        events = db.session.scalars(
+            sa.select(Event).where(Event.user_id == current_user.id)
+        )
+        analysis_result = get_productivity_analysis(events)
+    return render_template('analysis.html', analysis_result=analysis_result)
 
 @app.route('/settings', methods=['GET', 'POST'])
 @login_required
