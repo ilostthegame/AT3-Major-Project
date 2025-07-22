@@ -38,6 +38,10 @@ def login():
 @app.route('/logout')
 def logout():
     """Handles user logout"""
+    # Clear user-specific chat history on logout for security
+    if current_user.is_authenticated:
+        chat_key = f'chat_history_{current_user.id}'
+        session.pop(chat_key, None)
     logout_user()
     return redirect(url_for('login'))
 
