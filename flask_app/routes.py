@@ -86,7 +86,7 @@ def calendar():
         # Call your LLM here
         ai_event_str = get_ai_event_string(ai_form.prompt.data)
         if ai_event_str.strip() == 'Could not generate event string.':
-            flash('Could not generate event string.')
+            flash('Could not generate event. Please try a different prompt.')
             return redirect(url_for('calendar'))
         try:
             title, start, end = [s.strip().strip('`') for s in ai_event_str.split('|')]
@@ -99,7 +99,7 @@ def calendar():
             db.session.add(event)
             db.session.commit()
         except Exception as e:
-            flash('Could not generate event string.')
+            flash('Could not generate event. Please try a different prompt.')
         return redirect(url_for('calendar'))
     # Render the calendar page with existing events
     events = [
