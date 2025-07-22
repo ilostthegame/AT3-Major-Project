@@ -1,5 +1,85 @@
+.confirm-checkbox {
+    transform: scale(1.5);
+    margin-right: 10px;
+    margin-left: 5px;
+    accent-color: #fc5c7d;
+}
+.confirm-label {
+    font-weight: bold;
+    color: #6a82fb;
+}
+
+.btn-sign {
+    background: linear-gradient(90deg, #176a5c 0%, #2c786c 100%);
+    border: none;
+    color: #f3f3f3;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(44,120,108,0.10);
+    transition: background 0.2s;
+}
+.btn-sign:hover {
+    background: linear-gradient(90deg, #2c786c 0%, #176a5c 100%);
+}
+
 body {
-    background-color: #f8f9fa;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #e0eafc 0%, #cfdef3 100%);
+    min-height: 100vh;
+    margin: 0;
+    padding: 0;
+}
+
+a {
+    color: #222;
+    text-decoration: underline;
+    font-weight: 500;
+    transition: color 0.2s;
+}
+a:hover {
+    color: #444;
+    text-decoration: underline;
+}
+
+.btn-primary {
+    background: linear-gradient(90deg, #6a82fb 0%, #fc5c7d 100%);
+    border: none;
+    color: #fff;
+    font-weight: 600;
+    box-shadow: 0 2px 8px rgba(100,100,100,0.08);
+    transition: background 0.2s;
+}
+.btn-primary:hover {
+    background: linear-gradient(90deg, #fc5c7d 0%, #6a82fb 100%);
+}
+
+.container {
+    background: rgba(255,255,255,0.85);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px rgba(100,100,100,0.10);
+    padding: 2rem;
+    margin-top: 2rem;
+}
+
+.form-control {
+    border-radius: 8px;
+    border: 1px solid #ddd;
+    padding: 0.75rem;
+    font-size: 1rem;
+}
+
+.alert {
+    border-radius: 8px;
+    font-size: 1.1rem;
+    font-weight: 500;
+}
+
+nav {
+    background: linear-gradient(90deg, #fc5c7d 0%, #6a82fb 100%);
+    color: #fff;
+    padding: 1rem 2rem;
+    border-bottom-left-radius: 16px;
+    border-bottom-right-radius: 16px;
+    margin-bottom: 2rem;
 }
 
 /* Style for the login/signup container */
@@ -29,4 +109,8 @@ body {
 .fc-col-header-cell-cushion {
     color: #000 !important; 
     text-decoration: none !important;
+}
+
+#logout {
+    color: rgb(133, 0, 0);
 }

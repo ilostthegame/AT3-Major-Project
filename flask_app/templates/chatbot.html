@@ -1,25 +1,29 @@
 {% extends "base-loggedin.html" %}
 {% block content %}
-<div class="container mt-4">
-    <h3>Helper Chatbot</h3>
-    <div id="chatbox" style="border:1px solid #ccc; padding:1em; height:300px; overflow-y:auto; margin-bottom:1em;">
+<div class="container-fluid mt-4">
+  <div class="row justify-content-center">
+    <div class="col-12 col-md-8 col-lg-6">
+      <h3 class="mb-3">Helper Chatbot</h3>
+      <div id="chatbox" style="border:1px solid #ccc; padding:1.5em; min-height:350px; max-height:60vh; overflow-y:auto; margin-bottom:1em; background:rgba(255,255,255,0.95); border-radius:12px;">
         {% if chat_history %}
-            {% for entry in chat_history %}
-                <div><b>You:</b> {{ entry.user }}</div>
-                <div><b>Bot:</b> {{ entry.bot }}</div>
-            {% endfor %}
+          {% for entry in chat_history %}
+            <div><b>You:</b> {{ entry.user }}</div>
+            <div><b>Bot:</b> {{ entry.bot }}</div>
+          {% endfor %}
         {% endif %}
-    </div>
-    <form id="chat-form" method="post" autocomplete="off">
+      </div>
+      <form id="chat-form" method="post" autocomplete="off">
         {{ form.hidden_tag() }}
-        <div class="input-group">
-            {{ form.message(class="form-control", id="user-input", placeholder="Type your question...", autocomplete="off") }}
-            <button type="submit" class="btn btn-primary">Send</button>
+        <div class="input-group mb-2">
+          {{ form.message(class="form-control", id="user-input", placeholder="Type your question...", autocomplete="off") }}
+          <button type="submit" class="btn btn-primary">Send</button>
         </div>
         {% for error in form.message.errors %}
-            <span class="text-danger">[{{ error }}]</span>
+          <span class="text-danger">[{{ error }}]</span>
         {% endfor %}
-    </form>
+      </form>
+    </div>
+  </div>
 </div>
 <!-- Ensures the chatbox scrolls to the bottom when page is entered -->
 <script>
