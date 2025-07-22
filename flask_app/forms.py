@@ -100,5 +100,5 @@ class ClearCalendarForm(FlaskForm):
 
 class AICalendarEventForm(FlaskForm):
     """Form for automated event addition"""
-    message = StringField('Describe your event', validators=[DataRequired()])
-    autoevent_submit = SubmitField('Add Event With AI')
+    prompt = StringField('Describe your event', validators=[DataRequired()])
+    submit_ai = SubmitField('Add Event With AI')

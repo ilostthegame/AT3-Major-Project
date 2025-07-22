@@ -39,18 +39,19 @@
             </div>
           </div>
         </nav>
-        <!-- Temporary flash handling -->
+
+        <!-- Flash handling -->
         {% with messages = get_flashed_messages() %}
         {% if messages %}
-        <ul>
-            {% for message in messages %}
-            <li>{{ message }}</li>
-            {% endfor %}
-        </ul>
+            <div class="alert alert-danger" role="alert">
+                    {% for message in messages %}
+                        {{ message }}
+                    {% endfor %}
+            </div>
         {% endif %}
         {% endwith %}
-        <!-- End Temporary flash handling -->
 
         {% block content %}{% endblock %}
+        
     </body>
 </html>
